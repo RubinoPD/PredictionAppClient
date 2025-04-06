@@ -13,7 +13,7 @@ public interface PredictionService {
     @POST("api/predict/grade")
     Call<PredictionResponse> predictGrade(@Body PredictionRequest request);
 
-    @GET("api/predict/grade")
+    @GET("api/predict/history")
     Call<List<GradeHistory>> getPredictionHistory();
 
     @GET("api/predict/analytics/weak-students")
@@ -21,6 +21,7 @@ public interface PredictionService {
 
     @GET("api/predict/analytics/accuracy")
     Call<Map<String, Object>> getPredictionAccuracy();
+
 
     @PUT("api/predict/history/{id}/actual-grade")
     Call<GradeHistory> updateActualGrade(@Path("id") Long id, @Body Map<String, String> actualGrade);

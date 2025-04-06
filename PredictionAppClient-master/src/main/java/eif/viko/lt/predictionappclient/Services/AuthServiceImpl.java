@@ -29,10 +29,12 @@ public class AuthServiceImpl {
                 if(response.isSuccessful() && response.body() != null) {
                     String token = response.body().getToken();
                     System.out.println("JWT TOKENAS: " + token);
+                    // Issaugome tokena
                     SecureStorage.saveToken(token);
                     callback.onLoginSuccess(token);
                 }else{
-                    System.out.println("LOGIN FAILED: " + response.message());
+                    System.out.println("LOGIN FAILED: " + response.code() + " - " + response.message());
+                    callback.onLoginFailure("Statusas: " + response.code());
                 }
             }
             @Override

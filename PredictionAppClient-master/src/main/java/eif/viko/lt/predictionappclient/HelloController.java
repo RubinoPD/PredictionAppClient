@@ -339,27 +339,28 @@ public class HelloController implements Initializable {
         predictionService.predictGrade(attendance, assignments, midterm, finalExam, new PredictionCallback() {
             @Override
             public void onPredictionSuccess(String predictedGrade) {
-                resultLabel.setText("Prognozuojamas pažymys: " + predictedGrade);
+                Platform.runLater(() -> {
+                    resultLabel.setText("Prognozuojamas pažymys: " + predictedGrade);
 
-                // Set color based on grade
-                if ("A".equals(predictedGrade)) {
-                    resultLabel.setStyle("-fx-text-fill: green; -fx-font-size: 16px;");
-                } else if ("B".equals(predictedGrade)) {
-                    resultLabel.setStyle("-fx-text-fill: darkgreen; -fx-font-size: 16px;");
-                } else if ("C".equals(predictedGrade)) {
-                    resultLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 16px;");
-                } else {
-                    resultLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16px;");
-                }
-
-                // Refresh history table
-                showHistory(event);
+                    // Set color based on grade
+                    if ("A".equals(predictedGrade)) {
+                        resultLabel.setStyle("-fx-text-fill: green; -fx-font-size: 16px;");
+                    } else if ("B".equals(predictedGrade)) {
+                        resultLabel.setStyle("-fx-text-fill: darkgreen; -fx-font-size: 16px;");
+                    } else if ("C".equals(predictedGrade)) {
+                        resultLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 16px;");
+                    } else {
+                        resultLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16px;");
+                    }
+                });
             }
 
             @Override
             public void onPredictionFailure(String errorMessage) {
-                resultLabel.setText("Klaida: " + errorMessage);
-                resultLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16px;");
+                Platform.runLater(() -> {
+                    resultLabel.setText("Klaida: " + errorMessage);
+                    resultLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16px;");
+                });
             }
         });
     }
@@ -369,14 +370,18 @@ public class HelloController implements Initializable {
         predictionService.getPredictionHistory(new HistoryCallback() {
             @Override
             public void onHistorySuccess(List<GradeHistory> history) {
-                historyData.clear();
-                historyData.addAll(history);
+                Platform.runLater(() -> {
+                    historyData.clear();
+                    historyData.addAll(history);
+                });
             }
 
             @Override
             public void onHistoryFailure(String errorMessage) {
-                resultLabel.setText("Klaida gaunant istoriją: " + errorMessage);
-                resultLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16px;");
+                Platform.runLater(() -> {
+                    resultLabel.setText("Klaida gaunant istoriją: " + errorMessage);
+                    resultLabel.setStyle("-fx-text-fill: red; -fx-font-size: 16px;");
+                });
             }
         });
     }
