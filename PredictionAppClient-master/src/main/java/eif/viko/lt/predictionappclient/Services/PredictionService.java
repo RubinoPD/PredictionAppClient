@@ -9,7 +9,7 @@ import retrofit2.http.*;
 import java.util.List;
 import java.util.Map;
 
-public interface PredictionServices {
+public interface PredictionService {
     @POST("api/predict/grade")
     Call<PredictionResponse> predictGrade(@Body PredictionRequest request);
 
