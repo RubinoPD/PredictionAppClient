@@ -18,8 +18,8 @@ ext {
 }
 
 
-sourceCompatibility = '23' // Set this to 21 or higher
-targetCompatibility = '23' // Set this to 21 or higher
+sourceCompatibility = '21' // Set this to 21 or higher
+targetCompatibility = '21' // Set this to 21 or higher
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
