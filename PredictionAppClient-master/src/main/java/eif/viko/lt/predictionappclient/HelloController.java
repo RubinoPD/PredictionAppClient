@@ -248,6 +248,9 @@ public class HelloController implements Initializable {
                         chatTab.setDisable(false);
                         predictionTab.setDisable(false);
 
+                        // Isvalome istorijos data po prisijungimo
+                        historyData.clear();
+
                         // Gaukite naudotojo informaciją
                         userService.getCurrentUser(new UserCallback() {
                             @Override
@@ -327,6 +330,11 @@ public class HelloController implements Initializable {
 
         // Isvalyti sveiknimo teksta
         mainTabLabel.setText("");
+
+        // Isvalome istorijos lentele
+        historyData.clear();
+
+        // Isvalome chatbot
     }
 
     @FXML
