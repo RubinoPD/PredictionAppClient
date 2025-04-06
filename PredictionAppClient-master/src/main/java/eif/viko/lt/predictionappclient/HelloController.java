@@ -98,11 +98,17 @@ public class HelloController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Check authentication
-        boolean isAuthenticated = SecureStorage.getToken() == null;
-        authPanelBox.setVisible(isAuthenticated);
-        chatTab.setDisable(isAuthenticated);
-        predictionTab.setDisable(isAuthenticated);
+        // Patikrinam ar turime issaugota token
+        boolean isAuthenticated = SecureStorage.getToken() != null;
+
+        // Nustatome UI elementu pradine busena
+        authPanelBox.setVisible(!isAuthenticated);
+        chatTab.setDisable(!isAuthenticated);
+        predictionTab.setDisable(!isAuthenticated);
         mainTabLabel.setText(SecureStorage.getToken());
+
+        // Uztikriname, kad atsijungimo mygtukas butu matomas tik jei vartotojas prisijunges
+        logoutBtn.setVisible(isAuthenticated);
 
         // Pradine teksto reiksme
         mainTabLabel.setText("");

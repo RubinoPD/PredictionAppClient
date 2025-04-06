@@ -18,6 +18,8 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
+        // Isvalome tokena programos paleidimo metu
+        SecureStorage.clearToken();
         launch();
     }
 }
