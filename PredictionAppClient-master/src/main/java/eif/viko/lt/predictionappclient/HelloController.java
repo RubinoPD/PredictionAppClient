@@ -1,6 +1,7 @@
 package eif.viko.lt.predictionappclient;
 
 import eif.viko.lt.predictionappclient.Dto.GradeHistory;
+import eif.viko.lt.predictionappclient.Dto.UserProfile;
 import eif.viko.lt.predictionappclient.Services.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -87,6 +88,7 @@ public class HelloController implements Initializable {
     private final AuthServiceImpl authService = new AuthServiceImpl();
     private final ChatBotServiceImpl chatBotService = new ChatBotServiceImpl();
     private final PredictionServiceImpl predictionService = new PredictionServiceImpl();
+    private final UserServiceImpl userService = new UserServiceImpl();
 
     // Data
     private ObservableList<GradeHistory> historyData = FXCollections.observableArrayList();
@@ -198,6 +200,20 @@ public class HelloController implements Initializable {
                     logoutBtn.setVisible(true);
                     chatTab.setDisable(false);
                     predictionTab.setDisable(false);
+
+                    // Gauti naudotojo informacija
+                    userService.getCurrentUser(new UserCallback() {
+                        @Override
+                        public void onUserFetched(UserProfile userProfile) {
+                            String userName = userProfile.getUsername();
+                            mainTabLabel.setText("Sveiki prisijunge, " + userName);
+                        }
+
+                        @Override
+                        public void onUserFetchFailed(String errorMessage) {
+                            mainTabLabel.setText("Sveiki prisijunge");
+                        }
+                    });
                 }
 
                 @Override
