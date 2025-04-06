@@ -104,6 +104,9 @@ public class HelloController implements Initializable {
         predictionTab.setDisable(isAuthenticated);
         mainTabLabel.setText(SecureStorage.getToken());
 
+        // Pradine teksto reiksme
+        mainTabLabel.setText("");
+
         // Initialize ChatBot
         chatBotAnswerTextArea.setText("Sveiki! Užduokite klausimą iš Java programavimo kalbos.\n");
         chatBotMessageInput.setOnKeyPressed(this::handleKeyPress);
@@ -230,6 +233,9 @@ public class HelloController implements Initializable {
         logoutBtn.setVisible(false);
         chatTab.setDisable(true);
         predictionTab.setDisable(true);
+
+        // Isvalyti sveiknimo teksta
+        mainTabLabel.setText("");
     }
 
     @FXML
