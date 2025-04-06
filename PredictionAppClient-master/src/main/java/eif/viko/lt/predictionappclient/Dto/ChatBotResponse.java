@@ -1,27 +1,38 @@
 package eif.viko.lt.predictionappclient.Dto;
 
 import java.util.List;
+import java.util.Map;
 
 public class ChatBotResponse {
 
         private String bestCategory;
-        private List<String> allCategories;
+        private String response;
+        private Map<String, Double>
+                allCategories;
         public ChatBotResponse() {
         }
-        public ChatBotResponse(String bestCategory, List<String> allCategories) {
-            this.bestCategory = bestCategory;
-            this.allCategories = allCategories;
-        }
-        public String getBestCategory() {
-            return bestCategory;
-        }
-        public void setBestCategory(String bestCategory) {
-            this.bestCategory = bestCategory;
-        }
-        public List<String> getAllCategories() {
-            return allCategories;
-        }
-        public void setAllCategories(List<String> allCategories) {
-            this.allCategories = allCategories;
-        }
+
+    public String getBestCategory() {
+        return bestCategory;
+    }
+
+    public void setBestCategory(String bestCategory) {
+        this.bestCategory = bestCategory;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
+
+    public Map<String, Double> getAllCategories() {
+        return allCategories;
+    }
+
+    public void setAllCategories(Map<String, Double> allCategories) {
+        this.allCategories = allCategories;
+    }
 }
