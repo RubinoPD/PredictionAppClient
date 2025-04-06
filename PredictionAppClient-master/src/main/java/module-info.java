@@ -15,4 +15,8 @@ module eif.viko.lt.predictionappclient {
 
     opens eif.viko.lt.predictionappclient to javafx.fxml;
     exports eif.viko.lt.predictionappclient;
+
+    // Eksportuojam papildomus paketus
+    exports eif.viko.lt.predictionappclient.Services;
+    exports eif.viko.lt.predictionappclient.Dto;
 }
