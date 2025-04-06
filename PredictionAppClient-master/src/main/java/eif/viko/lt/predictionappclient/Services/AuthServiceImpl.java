@@ -2,6 +2,8 @@ package eif.viko.lt.predictionappclient.Services;
 
 import eif.viko.lt.predictionappclient.Dto.LoginRequest;
 import eif.viko.lt.predictionappclient.Dto.LoginResponse;
+import eif.viko.lt.predictionappclient.Dto.RegisterRequest;
+import eif.viko.lt.predictionappclient.Dto.UserProfile;
 import eif.viko.lt.predictionappclient.SecureStorage;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -37,6 +39,27 @@ public class AuthServiceImpl {
             public void onFailure(Call<LoginResponse> call, Throwable throwable) {
                 System.out.println("LOGIN FAILED: " + throwable.getMessage());
                 callback.onLoginFailure(throwable.getMessage());
+            }
+        });
+    }
+
+    public void register(String username, String email, String password, String role, final RegisterCallback callback) {
+        RegisterRequest request = new RegisterRequest(email, password, username, role);
+        Call<UserProfile> call = authService.register(request);
+
+        call.enqueue(new Callback<UserProfile>() {
+            @Override
+            public void onResponse(Call<UserProfile> call, Response<UserProfile> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onRegisterSuccess(response.body());
+                } else {
+                    callback.onRegisterFailure("Registracija nepavyko: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserProfile> call, Throwable t) {
+                callback.onRegisterFailure("Klaida: " + t.getMessage());
             }
         });
     }

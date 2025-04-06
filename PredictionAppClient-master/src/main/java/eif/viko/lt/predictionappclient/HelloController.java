@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.application.Platform;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -38,11 +39,25 @@ public class HelloController implements Initializable {
     @FXML
     private Text mainTabLabel;
 
+    // Register elements
+    @FXML
+    private TextField registerUsername;
+    @FXML
+    private TextField registerEmail;
+    @FXML
+    private TextField registerPassword;
+    @FXML
+    private ComboBox<String> roleComboBox;
+    @FXML
+    private Label registerStatus;
+
     // Tab elements
     @FXML
     private Tab chatTab;
     @FXML
     private Tab predictionTab;
+    @FXML
+    private Tab adminTab;
 
     // ChatBot elements
     @FXML
@@ -122,6 +137,25 @@ public class HelloController implements Initializable {
 
         // Initialize history table
         initializeHistoryTable();
+
+        // Roliu upzildymas
+        roleComboBox.getItems().addAll("USER", "TEACHER");
+        roleComboBox.setValue("USER");
+
+        // Pradzioje admin skirtuko nerodom
+        adminTab.setDisable(true);
+
+        // Patikrinti ar vartotojas yra administratorius po prisijungimo
+        // Tai bus daroma login metode
+    }
+
+    // Metodas roles patikrinimui
+    private void checkUserRole(UserProfile userProfile) {
+        if (userProfile != null && "ADMIN".equals(userProfile.getRole())) {
+            adminTab.setDisable(false);
+        } else {
+            adminTab.setDisable(true);
+        }
     }
 
     private void setupSliderListeners() {
@@ -183,13 +217,17 @@ public class HelloController implements Initializable {
             chatBotService.sendMessage(question, new ChatBotCallback() {
                 @Override
                 public void onLoginSuccess(String message) {
-                    chatBotAnswerTextArea.appendText("Pokalbių roboto atsakymas\n");
-                    chatBotAnswerTextArea.appendText("\t" + message + "\n");
+                    Platform.runLater(() -> {
+                        chatBotAnswerTextArea.appendText("Pokalbių roboto atsakymas\n");
+                        chatBotAnswerTextArea.appendText("\t" + message + "\n");
+                    });
                 }
 
                 @Override
                 public void onLoginFailure(String errorMessage) {
-                    chatBotAnswerTextArea.appendText("Klaida: " + errorMessage + "\n");
+                    Platform.runLater(() -> {
+                        chatBotAnswerTextArea.appendText("Klaida: " + errorMessage + "\n");
+                    });
                 }
             });
         }
@@ -204,32 +242,78 @@ public class HelloController implements Initializable {
             authService.login(user, pass, new LoginCallback() {
                 @Override
                 public void onLoginSuccess(String token) {
-                    authPanelBox.setVisible(false);
-                    mainTabLabel.setText("Sveiki prisijungę");
-                    logoutBtn.setVisible(true);
-                    chatTab.setDisable(false);
-                    predictionTab.setDisable(false);
+                    Platform.runLater(() -> {
+                        authPanelBox.setVisible(false);
+                        logoutBtn.setVisible(true);
+                        chatTab.setDisable(false);
+                        predictionTab.setDisable(false);
 
-                    // Gauti naudotojo informacija
-                    userService.getCurrentUser(new UserCallback() {
-                        @Override
-                        public void onUserFetched(UserProfile userProfile) {
-                            String userName = userProfile.getUsername();
-                            mainTabLabel.setText("Sveiki prisijunge, " + userName);
-                        }
+                        // Gaukite naudotojo informaciją
+                        userService.getCurrentUser(new UserCallback() {
+                            @Override
+                            public void onUserFetched(UserProfile userProfile) {
+                                Platform.runLater(() -> {
+                                    String userName = userProfile.getUsername();
+                                    mainTabLabel.setText("Sveiki prisijungę, " + userName);
 
-                        @Override
-                        public void onUserFetchFailed(String errorMessage) {
-                            mainTabLabel.setText("Sveiki prisijunge");
-                        }
+                                    // Patikrinti rolę
+                                    checkUserRole(userProfile);
+                                });
+                            }
+
+                            @Override
+                            public void onUserFetchFailed(String errorMessage) {
+                                Platform.runLater(() -> {
+                                    mainTabLabel.setText("Sveiki prisijungę");
+                                });
+                            }
+                        });
                     });
                 }
 
                 @Override
                 public void onLoginFailure(String errorMessage) {
-                    mainTabLabel.setText("Klaida: " + errorMessage);
+                    Platform.runLater(() -> {
+                        mainTabLabel.setText("Klaida: " + errorMessage);
+                    });
                 }
             });
+    }
+
+    @FXML
+    void registerUser(ActionEvent event) {
+        String username = registerUsername.getText();
+        String email = registerEmail.getText();
+        String password = registerPassword.getText();
+        String role = roleComboBox.getValue();
+
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            registerStatus.setText("Visi laukai turi buti uzpildyti");
+            registerStatus.setStyle("-fx-text-fill: red;");
+            return;
+        }
+
+        authService.register(username, email, password, role, new RegisterCallback() {
+            @Override
+            public void onRegisterSuccess(UserProfile userProfile) {
+                Platform.runLater(() -> {
+                    registerStatus.setText("Vartotojas " + userProfile.getUsername() + " sėkmingai užregistruotas");
+                    registerStatus.setStyle("-fx-text-fill: green;");
+
+                    // Išvalyti laukus
+                    registerUsername.clear();
+                    registerEmail.clear();
+                    registerPassword.clear();
+                    roleComboBox.setValue("USER");
+                });
+            }
+
+            @Override
+            public void onRegisterFailure(String errorMessage) {
+                registerStatus.setText("Klaida: " + errorMessage);
+                registerStatus.setStyle("-fx-text-fill: red;");
+            }
+        });
     }
 
     @FXML
@@ -239,6 +323,7 @@ public class HelloController implements Initializable {
         logoutBtn.setVisible(false);
         chatTab.setDisable(true);
         predictionTab.setDisable(true);
+        adminTab.setDisable(true);
 
         // Isvalyti sveiknimo teksta
         mainTabLabel.setText("");
